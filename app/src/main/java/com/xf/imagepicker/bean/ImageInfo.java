@@ -10,4 +10,8 @@ public class ImageInfo {
     public ImageInfo(String path) {
         this.path = path;
     }
+
+    public String getPath() {
+        return path;
+    }
 }
