@@ -64,7 +64,7 @@ public class ImageUtil {
                     if (imageFolder == null) {//如若还没有该“目录”则新建一个
                         imageFolder = new ImageFolder(bucketName);
                         imageFolders.add(imageFolder);
-                        imageFolderRecord.put(bucketName, imageFolder);
+                        imageFolderRecord.put(bucketName, imageFolder);//将该“目录”记录下来
                     }
                     imageFolder.addImageInfo(imageInfo);//图片信息放入该目录内
                 }

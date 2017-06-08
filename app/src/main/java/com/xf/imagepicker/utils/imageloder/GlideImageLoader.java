@@ -38,6 +38,7 @@ class GlideImageLoader implements ImageLoader {
                         .into(iv);
             } else if (option.loadErrorResId != DisplayOption.NONE) {
                 drawableTypeRequest.error(option.loadErrorResId)
+                        .dontAnimate()
                         .into(iv);
             }
         } else {
