@@ -19,6 +19,7 @@ public class ItemSpanDecoration extends RecyclerView.ItemDecoration {
         mHalfPx = mPx / 2;
     }
 
+
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         int position = parent.getChildAdapterPosition(view);
@@ -30,16 +31,12 @@ public class ItemSpanDecoration extends RecyclerView.ItemDecoration {
         if (tempPosition % 3 == 1) {//第一列
             outRect.left = mPx;
             outRect.right = mHalfPx;
-        }
-        if (tempPosition % 3 == 2) {//第二列
+        } else if (tempPosition % 3 == 2) {//第二列
             outRect.left = mHalfPx;
             outRect.right = mHalfPx;
-        }
-
-        if (tempPosition % 3 == 0) {//第三列
+        } else if (tempPosition % 3 == 0) {//第三列
             outRect.left = mHalfPx;
             outRect.right = mPx;
         }
-
     }
 }
