@@ -58,6 +58,10 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         notifyDataSetChanged();
     }
 
+    public List<ImageInfo> getData() {
+        return mImageInfos;
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public ViewHolder(View itemView) {
