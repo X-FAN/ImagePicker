@@ -2,7 +2,6 @@ package com.xf.imagepicker.view.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +10,7 @@ import android.widget.LinearLayout;
 
 import com.xf.imagepicker.R;
 import com.xf.imagepicker.bean.ImageInfo;
+import com.xf.imagepicker.utils.ImageUtil;
 import com.xf.imagepicker.utils.imageloder.ImageLoader;
 import com.xf.imagepicker.utils.imageloder.ImageLoaderFactory;
 
@@ -28,11 +28,10 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private ImageLoader.DisplayOption mDisplayOption;
 
 
-    public ImageAdapter(Context context, List<ImageInfo> imageInfos, int screenWith, int dp) {
-        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
+    public ImageAdapter(Context context, List<ImageInfo> imageInfos, int dp) {
         mImageInfos = imageInfos;
         mDisplayOption = new ImageLoader.DisplayOption();
-        mImageWith = (screenWith - px * 4) / 3;
+        mImageWith = ImageUtil.getImageWith(context, dp);
     }
 
     @Override

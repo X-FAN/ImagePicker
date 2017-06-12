@@ -3,7 +3,6 @@ package com.xf.imagepicker.view;
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -13,7 +12,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 
 import com.xf.imagepicker.R;
 import com.xf.imagepicker.bean.ImageFolder;
@@ -31,7 +29,6 @@ import java.util.List;
  */
 public class MainActivity extends AppCompatActivity {
     public static final int SIGN_IMAGE = 2402;
-    private final String TAG = "MainActivity";
     private final int PERMISSION_READ_EXTERNAL_STORAGE = 2401;
 
     private List<ImageFolder> mImageFolders;
@@ -45,14 +42,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Resources resources = this.getResources();
-        DisplayMetrics dm = resources.getDisplayMetrics();
-        int screenWith = dm.widthPixels;
         ImageLoaderFactory.init(this);
         mImageShow = (RecyclerView) findViewById(R.id.image_show);
-        mImageShow.setLayoutManager(new GridLayoutManager(this, 3));
-        mImageShow.setAdapter(mImageAdapter = new ImageAdapter(this, null, screenWith, 10));
-        mImageShow.addItemDecoration(new ItemSpanDecoration(this, 10));
+        mImageShow.setLayoutManager(new GridLayoutManager(this, 3));//默认三列，其他暂时不支持等间距
+        mImageShow.setAdapter(mImageAdapter = new ImageAdapter(this, null, 5));
+        mImageShow.addItemDecoration(new ItemSpanDecoration(this, 5));
         getAllImages();
     }
 

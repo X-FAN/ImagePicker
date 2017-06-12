@@ -1,9 +1,12 @@
 package com.xf.imagepicker.utils;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.provider.MediaStore;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 
 import com.xf.imagepicker.bean.ImageFolder;
 import com.xf.imagepicker.bean.ImageInfo;
@@ -78,5 +81,41 @@ public class ImageUtil {
         }
 
         return imageFolders;
+    }
+
+    /**
+     * 根据间距算出图片的宽度,默认三列
+     *
+     * @param context
+     * @param dp      间距单位为 dp
+     * @return
+     */
+    public static int getImageWith(Context context, int dp) {
+        int px = dp2px(context, dp);
+        int screenWith = getScreenWith(context);
+        return (screenWith - 4 * px) / 3;
+    }
+
+    /**
+     * dp 转换成 px
+     *
+     * @param context
+     * @param dp
+     * @return
+     */
+    public static int dp2px(Context context, int dp) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
+    }
+
+    /**
+     * 获取屏幕宽度
+     *
+     * @param context
+     * @return
+     */
+    public static int getScreenWith(Context context) {
+        Resources resources = context.getResources();
+        DisplayMetrics dm = resources.getDisplayMetrics();
+        return dm.widthPixels;
     }
 }
