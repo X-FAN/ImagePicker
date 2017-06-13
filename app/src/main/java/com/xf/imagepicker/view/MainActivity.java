@@ -6,15 +6,13 @@ import android.os.Bundle;
 import com.xf.imagepicker.R;
 
 /**
- * Created by X-FAN on 2015/6/12.
+ * Created by X-FAN on 2017/6/13.
  */
-public class ImageCropActivity extends AppCompatActivity {
-    public static String PARAM_PATH = "PARAM_PATH";
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_image_crop);
-        String path = getIntent().getStringExtra(PARAM_PATH);
+        setContentView(R.layout.activity_main);
     }
 }

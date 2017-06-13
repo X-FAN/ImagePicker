@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +15,9 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MenuItem;
 
 import com.xf.imagepicker.R;
 import com.xf.imagepicker.bean.ImageFolder;
@@ -26,6 +30,7 @@ import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -42,12 +47,28 @@ public class ImageSelectActivity extends AppCompatActivity {
     private ImageAdapter mImageAdapter;
     private RecyclerView mImageShow;
     private MyHandler mMyHandler = new MyHandler(this);
+    private ImageBottomSheetFragment bottomSheetFragment;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_inage_select);
+        bottomSheetFragment = new ImageBottomSheetFragment();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitleTextColor(Color.WHITE);
+        toolbar.setTitle("选择图片");
+        toolbar.inflateMenu(R.menu.my_menu);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (item.getItemId() == R.id.other) {
+                    bottomSheetFragment.show(getSupportFragmentManager(), "dialog");
+                }
+                return true;
+            }
+        });
+
         ImageLoaderFactory.init(this);
         mImageShow = (RecyclerView) findViewById(R.id.image_show);
         mImageShow.setLayoutManager(new GridLayoutManager(this, 3));//默认三列，其他暂时不支持等间距,请不要填写其他数值
@@ -62,7 +83,7 @@ public class ImageSelectActivity extends AppCompatActivity {
                     options.setHideBottomControls(true);
                     UCrop.of(Uri.fromFile(new File(sourceUri)), Uri.fromFile(new File(getCacheDir(), "crop")))
                             .withAspectRatio(1, 1)
-                            .withMaxResultSize(500, 500)
+                            .withMaxResultSize(300, 300)
                             .withOptions(options)
                             .start(ImageSelectActivity.this);
                 }
@@ -73,6 +94,9 @@ public class ImageSelectActivity extends AppCompatActivity {
 
     public void updateImage() {
         if (mImageFolders != null && mImageFolders.size() > 0) {
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList("info", (ArrayList<ImageFolder>) mImageFolders);
+            bottomSheetFragment.setArguments(bundle);
             mImageAdapter.setNewData(mImageFolders.get(0).getImageInfos());
         }
     }
@@ -106,8 +130,13 @@ public class ImageSelectActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
+            final Uri resultUri = UCrop.getOutput(data);
+            Log.d("test", resultUri.getPath());
+        } else if (resultCode == UCrop.RESULT_ERROR) {
+            final Throwable cropError = UCrop.getError(data);
+        }
     }
 
     private static class MyHandler extends Handler {
