@@ -19,6 +19,10 @@ public class ImageFolder  implements Parcelable{
         imageInfos = new ArrayList<>();
     }
 
+    public  String getCoverImagePath(){
+      return  imageInfos.get(0).getPath();
+    }
+
     protected ImageFolder(Parcel in) {
         folderName = in.readString();
     }

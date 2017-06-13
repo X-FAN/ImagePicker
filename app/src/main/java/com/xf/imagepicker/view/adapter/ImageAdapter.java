@@ -20,32 +20,27 @@ import java.util.List;
  * Created by X-FAN on 2017/6/7.
  */
 
-public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> {
 
     private int mImageWith;
     private List<ImageInfo> mImageInfos;
 
-    private ImageLoader.DisplayOption mDisplayOption;
-
-
     public ImageAdapter(Context context, List<ImageInfo> imageInfos, int dp) {
         mImageInfos = imageInfos;
-        mDisplayOption = new ImageLoader.DisplayOption();
         mImageWith = ImageUtil.getImageWith(context, dp);
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ImageAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_image, parent, false);
         view.setLayoutParams(new LinearLayout.LayoutParams(mImageWith, mImageWith));
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(ImageAdapter.ViewHolder holder, int position) {
         ImageInfo imageInfo = mImageInfos.get(position);
-        ImageView imageView = (ImageView) holder.itemView.findViewById(R.id.image);
-        ImageLoaderFactory.getInstance().displayImage(imageView, imageInfo.getPath());
+        ImageLoaderFactory.getInstance().displayImage(holder.image, imageInfo.getPath());
     }
 
     @Override
@@ -63,9 +58,10 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-
+        public  ImageView image;
         public ViewHolder(View itemView) {
             super(itemView);
+            image = (ImageView) itemView.findViewById(R.id.image);
         }
     }
 }

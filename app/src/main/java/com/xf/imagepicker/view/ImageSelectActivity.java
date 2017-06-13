@@ -30,7 +30,6 @@ import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -47,14 +46,14 @@ public class ImageSelectActivity extends AppCompatActivity {
     private ImageAdapter mImageAdapter;
     private RecyclerView mImageShow;
     private MyHandler mMyHandler = new MyHandler(this);
-    private ImageBottomSheetFragment bottomSheetFragment;
+    private ImageBottomSheetFragment mBottomSheetFragment;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inage_select);
-        bottomSheetFragment = new ImageBottomSheetFragment();
+        mBottomSheetFragment = new ImageBottomSheetFragment();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitleTextColor(Color.WHITE);
         toolbar.setTitle("选择图片");
@@ -63,7 +62,7 @@ public class ImageSelectActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getItemId() == R.id.other) {
-                    bottomSheetFragment.show(getSupportFragmentManager(), "dialog");
+                    mBottomSheetFragment.show(getSupportFragmentManager(), "dialog");
                 }
                 return true;
             }
@@ -94,9 +93,7 @@ public class ImageSelectActivity extends AppCompatActivity {
 
     public void updateImage() {
         if (mImageFolders != null && mImageFolders.size() > 0) {
-            Bundle bundle = new Bundle();
-            bundle.putParcelableArrayList("info", (ArrayList<ImageFolder>) mImageFolders);
-            bottomSheetFragment.setArguments(bundle);
+            mBottomSheetFragment.setData(mImageFolders);
             mImageAdapter.setNewData(mImageFolders.get(0).getImageInfos());
         }
     }
