@@ -1,7 +1,6 @@
 package com.xf.imagepicker.view.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +14,10 @@ import com.xf.imagepicker.utils.imageloder.ImageLoaderFactory;
 import java.util.List;
 
 /**
- * Created by Administrator on 2017/6/13 0013.
+ * Created by X-FAN on 2017/6/13.
  */
 
-public class ImageFolderAdapter  extends RecyclerView.Adapter<ImageFolderAdapter.ViewHolder> {
+public class ImageFolderAdapter extends RecyclerView.Adapter<ImageFolderAdapter.ViewHolder> {
 
     private List<ImageFolder> mImageFolders;
 
@@ -28,35 +27,36 @@ public class ImageFolderAdapter  extends RecyclerView.Adapter<ImageFolderAdapter
 
     @Override
     public ImageFolderAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_folder,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_folder, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        ImageFolder imageFolder =  mImageFolders.get(position);
-        ImageLoaderFactory.getInstance().displayImage(holder.mCoverImage,imageFolder.getCoverImagePath());
+        ImageFolder imageFolder = mImageFolders.get(position);
+        holder.folderName.setText(imageFolder.getFolderName());
+        ImageLoaderFactory.getInstance().displayImage(holder.coverImage, imageFolder.getCoverImagePath());
     }
 
 
     @Override
     public int getItemCount() {
-        return mImageFolders==null?0:mImageFolders.size();
+        return mImageFolders == null ? 0 : mImageFolders.size();
     }
 
-    public void setNewData(List<ImageFolder> imageFolders){
+    public void setNewData(List<ImageFolder> imageFolders) {
         mImageFolders = imageFolders;
         notifyDataSetChanged();
     }
 
-    public  static  class ViewHolder extends RecyclerView.ViewHolder{
-         public TextView mFolderName;
-        public ImageView mCoverImage;
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        public TextView folderName;
+        public ImageView coverImage;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            mFolderName = (TextView) itemView.findViewById(R.id.folder_name);
-            mCoverImage = (ImageView) itemView.findViewById(R.id.cover_image);
+            folderName = (TextView) itemView.findViewById(R.id.folder_name);
+            coverImage = (ImageView) itemView.findViewById(R.id.cover_image);
         }
     }
 }

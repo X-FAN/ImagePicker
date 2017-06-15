@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,13 +15,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.xf.imagepicker.R;
 import com.xf.imagepicker.bean.ImageFolder;
+import com.xf.imagepicker.bean.ImageInfo;
 import com.xf.imagepicker.utils.ImageUtil;
-import com.xf.imagepicker.utils.imageloder.ImageLoaderFactory;
+import com.xf.imagepicker.utils.StatusBarUtil;
 import com.xf.imagepicker.view.adapter.ImageAdapter;
 import com.xf.imagepicker.view.adapter.help.ItemSpanDecoration;
 import com.xf.imagepicker.view.adapter.help.OnItemTouchListener;
@@ -38,62 +37,78 @@ import java.util.List;
  */
 public class ImageSelectActivity extends AppCompatActivity {
     public static final int SIGN_IMAGE = 2402;
+    public static final String RESULT_PATH = "RESULT_PATH";
     private final int PERMISSION_READ_EXTERNAL_STORAGE = 2401;
-    private final int REQUEST_CROP = 2403;
 
     private List<ImageFolder> mImageFolders;
 
     private ImageAdapter mImageAdapter;
-    private RecyclerView mImageShow;
     private MyHandler mMyHandler = new MyHandler(this);
-    private ImageBottomSheetFragment mBottomSheetFragment;
+    private ImageBottomSheetDialog mBottomSheetDialog;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inage_select);
-        mBottomSheetFragment = new ImageBottomSheetFragment();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitleTextColor(Color.WHITE);
-        toolbar.setTitle("选择图片");
-        toolbar.inflateMenu(R.menu.my_menu);
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                if (item.getItemId() == R.id.other) {
-                    mBottomSheetFragment.show(getSupportFragmentManager(), "dialog");
-                }
-                return true;
-            }
-        });
+        StatusBarUtil.setStatusBarColor(this,getResources().getColor(R.color.colorPrimary));
+        initBottomDialog();
+        initToolbar();
+        initImageShow();
+        getAllImages();
+    }
 
-        ImageLoaderFactory.init(this);
-        mImageShow = (RecyclerView) findViewById(R.id.image_show);
-        mImageShow.setLayoutManager(new GridLayoutManager(this, 3));//默认三列，其他暂时不支持等间距,请不要填写其他数值
-        mImageShow.setAdapter(mImageAdapter = new ImageAdapter(this, null, 2));
-        mImageShow.addItemDecoration(new ItemSpanDecoration(this, 2));
-        mImageShow.addOnItemTouchListener(new OnItemTouchListener() {
+    private void initImageShow() {
+        RecyclerView imageShow = (RecyclerView) findViewById(R.id.image_show);
+        imageShow.setLayoutManager(new GridLayoutManager(this, 3));//默认三列，其他暂时不支持等间距,请不要填写其他数值
+        imageShow.setAdapter(mImageAdapter = new ImageAdapter(this, null, 2));
+        imageShow.addItemDecoration(new ItemSpanDecoration(this, 2));
+        imageShow.addOnItemTouchListener(new OnItemTouchListener() {
             @Override
             public void onItemClick(int position) {
                 if (mImageAdapter.getData().size() > 0) {//跳转到图片裁剪界面
                     String sourceUri = mImageAdapter.getData().get(position).getPath();
                     UCrop.Options options = new UCrop.Options();
                     options.setHideBottomControls(true);
-                    UCrop.of(Uri.fromFile(new File(sourceUri)), Uri.fromFile(new File(getCacheDir(), "crop")))
+                    UCrop.of(Uri.fromFile(new File(sourceUri)), Uri.fromFile(new File(getCacheDir(), "crop" + System.currentTimeMillis())))
                             .withAspectRatio(1, 1)
-                            .withMaxResultSize(300, 300)
+                            .withMaxResultSize(400, 400)
                             .withOptions(options)
                             .start(ImageSelectActivity.this);
                 }
             }
         });
-        getAllImages();
+    }
+
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("选择图片");
+        toolbar.inflateMenu(R.menu.my_menu);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (item.getItemId() == R.id.other) {
+                    mBottomSheetDialog.show();
+                }
+                return true;
+            }
+        });
+    }
+
+    private void initBottomDialog() {
+        mBottomSheetDialog = new ImageBottomSheetDialog(this);
+        mBottomSheetDialog.setContentView(R.layout.bottom_sheet_image);
+        mBottomSheetDialog.setOnClickListener(new ImageBottomSheetDialog.OnClickListener() {
+            @Override
+            public void onClick(List<ImageInfo> imageInfos) {
+                mImageAdapter.setNewData(imageInfos);
+            }
+        });
     }
 
     public void updateImage() {
         if (mImageFolders != null && mImageFolders.size() > 0) {
-            mBottomSheetFragment.setData(mImageFolders);
+            mBottomSheetDialog.setData(mImageFolders);
             mImageAdapter.setNewData(mImageFolders.get(0).getImageInfos());
         }
     }
@@ -130,9 +145,10 @@ public class ImageSelectActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
             final Uri resultUri = UCrop.getOutput(data);
-            Log.d("test", resultUri.getPath());
-        } else if (resultCode == UCrop.RESULT_ERROR) {
-            final Throwable cropError = UCrop.getError(data);
+            Intent intent = new Intent();
+            intent.putExtra(RESULT_PATH, resultUri.getPath());
+            setResult(RESULT_OK, intent);
+            finish();
         }
     }
 
