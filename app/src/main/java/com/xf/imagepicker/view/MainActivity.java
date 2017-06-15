@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final int REQ_CHOOSE_IMAGE = 2401;
 
-    ImageView mImage;
+   private ImageView mImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
