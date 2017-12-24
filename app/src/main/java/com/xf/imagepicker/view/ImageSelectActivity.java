@@ -45,13 +45,14 @@ public class ImageSelectActivity extends AppCompatActivity {
     private ImageAdapter mImageAdapter;
     private MyHandler mMyHandler = new MyHandler(this);
     private ImageBottomSheetDialog mBottomSheetDialog;
+    private ItemDecoration mDecoration;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inage_select);
-        StatusBarUtil.setStatusBarColor(this,getResources().getColor(R.color.colorPrimary));
+        StatusBarUtil.setStatusBarColor(this, getResources().getColor(R.color.colorPrimary));
         initBottomDialog();
         initToolbar();
         initImageShow();
@@ -60,6 +61,7 @@ public class ImageSelectActivity extends AppCompatActivity {
 
     private void initImageShow() {
         RecyclerView imageShow = (RecyclerView) findViewById(R.id.image_show);
+        imageShow.addItemDecoration(mDecoration = new ItemDecoration(ContextCompat.getDrawable(this, R.drawable.ic_selected), ContextCompat.getDrawable(this, R.drawable.ic_unselected), null, true));
         imageShow.setLayoutManager(new GridLayoutManager(this, 3));//默认三列，其他暂时不支持等间距,请不要填写其他数值
         imageShow.setAdapter(mImageAdapter = new ImageAdapter(this, null, 2));
         imageShow.addItemDecoration(new ItemSpanDecoration(this, 2));
@@ -109,6 +111,7 @@ public class ImageSelectActivity extends AppCompatActivity {
     public void updateImage() {
         if (mImageFolders != null && mImageFolders.size() > 0) {
             mBottomSheetDialog.setData(mImageFolders);
+            mDecoration.setData(mImageFolders.get(0).getImageInfos());
             mImageAdapter.setNewData(mImageFolders.get(0).getImageInfos());
         }
     }
